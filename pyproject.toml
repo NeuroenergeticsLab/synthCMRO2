@@ -1,0 +1,47 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "synthcmro2"
+version = "2.1.0"
+description = "Synthetic CMRO2 from minimal contrast-free MRI: models (training, selection, prediction) and manuscript figures"
+readme = "README.md"
+requires-python = ">=3.11"
+authors = [{ name = "Gabriel Castrillón" }, { name = "Pietro Marcolongo" }]
+license = { text = "MIT" }
+dependencies = [
+    "numpy>=1.26",
+    "pandas>=2.2",
+    "scipy>=1.11",          # false_discovery_control; bootstrap rng/random_state both handled
+    "scikit-learn>=1.3",    # cross-validation folds
+    "nibabel>=5.2",
+    "pyyaml>=6.0",
+]
+
+[project.optional-dependencies]
+# PyTorch: install first to match the CUDA version (used: torch 2.7.0+cu118), then this extra
+model = ["torch>=2.2", "monai>=1.3,<1.5", "pytorch-msssim>=1.0"]
+figures = ["matplotlib>=3.9", "seaborn>=0.13.2", "nilearn>=0.10"]
+# `synthcmro2 pls` also needs pyls, which is not on PyPI under that name:
+#   pip install git+https://github.com/netneurolab/pyls
+dev = ["pytest>=8", "ruff>=0.6"]
+
+[project.scripts]
+synthcmro2 = "synthcmro2.cli:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/synthcmro2"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra --import-mode=importlib"
+pythonpath = ["tests/model"]
+
+[tool.ruff]
+line-length = 120
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP", "NPY", "PD", "RUF"]
+ignore = ["PD101", "RUF001", "RUF002", "RUF003"]  # allow `df`; allow µ, ₂, × in text

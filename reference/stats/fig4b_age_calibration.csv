@@ -1,0 +1,2 @@
+dataset,model,n_train,a,b,b_se,b_p,r,mean_bias,test_dataset,n_test
+training_oof,CBF & T2*,54,6.781963135,-0.0787041758,0.1485374705,0.5984636998,-0.07328090716,3.611933832,test_set,41

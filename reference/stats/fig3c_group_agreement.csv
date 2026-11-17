@@ -1,0 +1,2 @@
+dataset,model,level,summary,n_subjects_max,n,r,p,r_ci_low,r_ci_high,slope,intercept,mae
+calculation,CBF & T2*,group,voxel-wise median across participants,10,7961,0.8886344593974119,0.0,0.8805861845548457,0.8963556367836124,0.8445719783658935,35.290106785170536,25.530274848589375

@@ -1,0 +1,137 @@
+# Figures and statistics of the manuscript from the public tables in data/public/ (no individual voxel data).
+# config/figures_individual.yaml reads the individual tables of `synthcmro2 model export` instead.
+# All paths are relative to the project root (the parent of config/) unless absolute.
+
+paths:
+  # Public tables, written by `synthcmro2 public-tables` (described in data/public/README.md). They already
+  # exclude the six Glasser parcels per hemisphere with outlying analytical CMRO2 (Materials and Methods),
+  # so analysis.exclude_parcels stays empty here.
+  participant_metrics: data/public/participant_metrics.csv
+  voxel_values: data/public/group_voxel_values.csv.gz     # group maps (medians across participants)
+  parcel_icc: data/public/parcel_icc.csv                    # Figure S2
+  parcel_sd: data/public/group_parcel_sd.csv                # Table S2, parcel level
+  age_calibration: data/public/age_calibration.csv          # Figure 4b
+  pls_dir: data/public/pls                                  # Figure 3b
+  output_dir: results/manuscript                            # figures/, stats/, run.log, provenance.json
+
+  # Gray matter mask that defines vox_id (NiftiMasker order). Needed to draw
+  # brain slices (Figure 3b) and surfaces; without it, Figure 3b shows the
+  # overlap statistics only.
+  gm_mask: data/brain/task-all_space-MNI152NLin2009cAsym_res-4_SNR_YEO_group_mask.nii.gz
+  brain_background: data/brain/tpl-MNI152NLin2009cAsym_res-04_desc-bet_T1w.nii  # empty = nilearn MNI152
+
+  # Optional inputs for the cortical surface panels (Figures 2 and 4).
+  # Cortical surface maps (left hemisphere). Leave empty to omit the maps.
+  surface:
+    glasser_atlas: data/brain/atlas-MMPGlasser2016_space-MNI152NLin2009cAsym_res-4mm_desc-cropped.nii.gz  # last y slice removed (synthcmro2 crop-atlas)
+    glasser_label_gii: data/brain/Glasser_2016.32k.L.label.gii
+    inflated_surf_gii: data/brain/fs_LR.32k.L.inflated.surf.gii
+
+# Dataset identifiers in the tables (as written by synthcmro2 model export), by role in the figures.
+datasets:
+  test: test_set                    # main cohort test set, Young-adults I/II and Older-adults I/II
+  task: calculation                 # calculation task, Young-adults I test participants
+  fmri: fmri_subset                 # resting-state fMRI subset of the test set
+  replication: replication          # same vendor and protocol
+  reproducibility: reproducibility  # different vendor and protocol
+  retest: test_retest               # second within-session scan of Young-adults II test participants (Fig. S2)
+  calibration: training_oof         # out-of-fold predictions of the training participants (Fig. 4b age calibration)
+
+dataset_labels:
+  test_set: test set
+  calculation: calculation
+  fmri_subset: test set (fMRI subset)
+  replication: Same-protocol dataset
+  reproducibility: Cross-vendor dataset
+
+# Model identifiers as stored in the CSV files (keys) and manuscript labels (values),
+# in the order they are shown in the figures.
+models:
+  reference: full
+  wo CBV: without CBV
+  CBF & T2*: CBF&T2*
+  CBF: CBF
+  T1: T1-weighted
+  fMRI: fMRI
+
+minimal_model: CBF & T2*
+# Single-input models compared against the CBF model (Results, anatomical/functional).
+alternative_input_models: [T1, fMRI]
+alternative_input_baseline: CBF
+
+# Mean-centered PLS of calculation versus rest (Figure 3b).
+pls:
+  file_pattern: "N10_PLS_cmro2_median_res-4_calcrest_GMmask_{tag}.npy"
+  analytical_tag: ORIGINAL
+  model_tags:                # models shown in Figure 3b, in order
+    reference: OmitT1
+    wo CBV: OmitCBV_OmitT1
+    CBF & T2*: OmitCBV_OmitT2_OmitT1
+    CBF: OmitCBV_OmitT2_OmitT2S_OmitT1
+  latent_variable: 0         # first LV
+  bsr_threshold: 2           # |bootstrap ratio| > 2
+  bsr_limit: 7               # color scale limits (± BSR)
+  slice_z: 15                # axial slice (mm, MNI)
+  task: calc
+  baseline: rest
+
+metrics:
+  r: Pearson r
+  slope: slope
+  MAE: MAE (µmol/100 g/min)
+
+analysis:
+  random_seed: 1234
+  n_bootstrap: 2000          # BCa bootstrap resamples for group-level r
+  ci_level: 0.95
+  positive_values_only: true # drop voxels with CMRO2 <= 0 or synthetic CMRO2 <= 0
+  group_summary: median      # voxel-wise summary across participants for group maps
+  sd_ddof: 1                 # sample SD for paired differences
+  # Fig. 4b: subtract from each test participant's synthetic CMRO2 the model error expected at their age,
+  # fitted (error = a + b x age) in out-of-fold predictions of the training participants (dataset role
+  # 'calibration'); uses no analytical CMRO2 of the test participants. age_plot selects the plotted values.
+  # fig4b_age_slopes.csv reports the decline per decade of analytical, synthetic and calibrated CMRO2 either way.
+  age_calibration: true
+  age_plot: synthetic          # Fig. 4b right panel: synthetic (uncorrected) or calibrated
+  # Sensitivity analysis: Glasser parcels removed in both hemispheres from all voxel-based results, e.g.
+  # [TE1m, TE2a, TE1p, TE2p, a10p, 11l]: inferior temporal parcels next to the petrous bone and frontal-pole/
+  # orbitofrontal parcels next to the frontal sinus, with outlying CMRO2 (strong susceptibility effects).
+  # Participant metrics are recomputed from the remaining voxels; outputs go to <output_dir>_excl-<names>.
+  # Usually left empty here and set per run: synthcmro2 figures --exclude-parcels TE1m TE2a TE1p TE2p a10p 11l
+  exclude_parcels: []
+
+# Test-retest reliability across Glasser parcels (Figure S2): ICC(2,1) of participant-wise parcel medians
+# between the two within-session scans, for analytical CMRO2 and each model.
+reliability:
+  min_parcel_voxels: 5       # mask voxels needed for a parcel median (as for Table S2 and the surface maps)
+  ylim: [0.1, 1.1]
+  bands: [0.5, 0.75, 0.9]    # Koo & Li (2016): moderate, good, excellent
+
+plotting:
+  font_family: DejaVu Sans
+  font_size: 8
+  dpi: 300                   # PNG resolution; --dpi overrides; null = Matplotlib default (100)
+  formats: [pdf, png, svg]
+  scatter_point_size: 1
+  scatter_color: "#666666"
+  line_color: black
+  condition_colors:          # light = reference condition, dark = comparison
+    light: "#bdbdbd"
+    dark: "#636363"
+  significance_color: "#d9534f"
+  axis_limits:
+    test: [0, 400]
+    task: [0, 600]
+    replication: [0, 400]
+    reproducibility: [0, 600]
+  units: "µmol/100 g/min"
+  surface:
+    cmap: magma
+    cmap_range: [0.25, 1.0]  # drop the near-black end of the colormap
+    percentiles: [10, 90]    # color limits from the analytical parcels, shared with synthetic maps
+    ambient: 0.75            # shading: 1 = flat, lower = stronger relief
+    medial_view: true        # Fig. 2a: medial view of the analytical map below the lateral one
+    # Parcels the gray matter mask barely covers are drawn gray, like the medial wall
+    min_coverage: 0.25       # fraction of the parcel's atlas voxels inside the mask
+    min_voxels: 5            # mask voxels needed for a parcel median
+

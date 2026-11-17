@@ -1,0 +1,194 @@
+# Configuration for training, selecting and applying the synthetic CMRO2 models.
+# Every path, participant list, file pattern, hyperparameter and seed used by the code is set here.
+# Relative paths are resolved against the project root (the parent of this config/ folder).
+
+# The participants' maps are not part of this repository (see README, Data). Put them under data/mqbold/
+# (one folder per participant, file names under `files` below) or point the paths to where they are.
+paths:
+  training_dir: data/mqbold/training
+  gm_mask: data/brain/task-all_space-MNI152NLin2009cAsym_res-4_SNR_YEO_group_mask.nii.gz
+  models_dir: models              # trained generators (download, see README) or your own training
+  selection_dir: models/model_selection
+  results_dir: results            # test metrics, logs and provenance of this package
+
+# Training participants per cohort. The ORDER matters: the folds are KFold(shuffle=True, random_state=seed)
+# over this list, exactly as in the training notebooks.
+cohorts:
+  main:                           # 2Train_512Bottleneck_gpu0 (mqBOLD and T1-weighted models)
+    train_ids: [sub-p020, sub-stab017, sub-p033, sub-stab018, sub-p019, sub-p023, sub-p048, sub-stab022,
+                sub-p051, sub-stab034, sub-stab028, sub-stab016, sub-stab021, sub-p052, sub-stab032,
+                sub-stab020, sub-stab003, sub-stab024, sub-stab015, sub-p032, sub-stab010, sub-p026,
+                sub-stab031, sub-p044, sub-stab036, sub-p028, sub-stab035, sub-p054, sub-p049, sub-stab014,
+                sub-stab026, sub-p029, sub-p039, sub-p037, sub-p031, sub-stab027, sub-p038, sub-p027,
+                sub-p043, sub-stab007, sub-p106, sub-p115, sub-p128, sub-p130, sub-p143, sub-p146, sub-p162,
+                sub-p206, sub-p207, sub-p209, sub-p213, sub-p219, sub-p224, sub-p227, sub-p234]
+    # validation participants of fold 1 in the training log; the run stops if the split differs
+    fold1_validation: [sub-p019, sub-p048, sub-p051, sub-p052, sub-stab015, sub-stab010, sub-stab031,
+                       sub-stab014, sub-p029, sub-p037, sub-p106, sub-p143, sub-p209, sub-p224]
+    # kept in train_ids so the folds do not change, but used in no fold's training or validation set:
+    # sub-stab035 has an empty reference CMRO2 map (0 positive gray matter voxels; fold 4 validation)
+    exclude_ids: [sub-stab035]
+  fmri_subset:                    # 5fMRI_Train (degree centrality model): Young-adults I with resting-state fMRI
+    train_ids: [sub-p019, sub-p020, sub-p023, sub-p027, sub-p028, sub-p029, sub-p031, sub-p032, sub-p033,
+                sub-p038, sub-p039, sub-p043, sub-p044, sub-p048, sub-p051, sub-p054]
+    fold1_validation: null        # not recorded in the latest training log
+
+# Voxel grid. All maps must be on the gray matter mask grid (48 x 56 x 48, 4 mm). Some maps (Young-adults I
+# test participants) store the grid origin 0.5 mm off the mask's (header convention, same voxels). Within
+# tolerance_mm, voxels are read directly (never resampled); larger offsets stop the run. Outputs are written
+# with the mask's affine (output_affine: mask), so tools such as nilearn's NiftiMasker do not resample them.
+grid:
+  tolerance_mm: 0.5
+  output_affine: mask
+
+# File patterns, relative to <data_dir>/<participant>. {sid} = participant, {condition} = rest or calc.
+files:
+  CBV: qmri/{sid}_task-{condition}_space-MNI152_res-4mm_cbv.nii.gz
+  CBF: qmri/{sid}_task-{condition}_space-MNI152_res-4mm_cbf.nii.gz
+  T2: qmri/{sid}_{condition}_space-MNI152_res-4mm_T2map.nii.gz
+  T2S: qmri/{sid}_task-{condition}_space-MNI152_res-4mm_T2Smap.nii.gz
+  T1: qmri/{sid}_task-{condition}_space-MNI152_res-4mm_T1wMNI.nii.gz
+  fMRI: "resting_preproc_{sid}_ses-1/afni_centrality_0_degree/_scan_rest/_compcor_ncomponents_5_selector_pc10.linear1.\
+    wm0.global0.motion1.quadratic1.gm0.compcor1.csf1/frequency_filter/afni_centrality/\
+    degree_centrality_weighted_space-MNI152NLin2009cAsym_res-4mm_gm-25_fwhm-6.nii.gz"
+  CMRO2: qmri/{sid}_task-{condition}_space-MNI152_res-4mm_desc-orig_cmro2.nii.gz
+
+# Outputs of `predict`, relative to <output_dir>/<participant>/<model output_subdir>. {name} = model file name.
+outputs:
+  synthetic: "{sid}_task-{condition}_space-MNI152_res-4mm_synthetic_cmro2{name}.nii.gz"
+  target_masked: "{sid}_task-{condition}_space-MNI152_res-4mm_desc-orig_cmro2_masked_TRAINING{suffix}.nii.gz"
+  input_masked: "{sid}_task-{condition}_space-MNI152_{modality}_MASKED.nii.gz"   # qmri/ only
+
+# Saved models, relative to models_dir. {name} = file name of the input configuration (e.g. _OmitT1), {fold} = 1-4.
+checkpoints:
+  generator: generators/{name}/trained_generator_model_RestCondition_{fold}{name}.pth
+  discriminator: discriminators/{name}/trained_discriminator_model_RestCondition_{fold}{name}.pth
+  history: logs/{name}/fold{fold}_history.csv         # new: training and validation loss per epoch
+  zscore: logs/{name}/fold{fold}_zscore.json          # new: normalization statistics used in that fold
+
+training:
+  seed: 1234
+  n_folds: 4
+  batch_size: 4
+  epochs: 750
+  lr_generator: 1.0e-4
+  lr_discriminator: 5.0e-5
+  scheduler: {factor: 0.9, patience: 10}            # ReduceLROnPlateau on the validation generator loss
+  loss_weights: {l1: 1.0, adversarial: 0.01, ssim: 0.5}
+  zscore: [T1, fMRI]                                # inputs without physical units; mean and SD over non-zero GM voxels
+  zscore_eps: 1.0e-8
+  deterministic: true                               # cuDNN deterministic kernels (not set in the notebooks)
+  cache_volumes: true                               # load each participant once; augmentation is still drawn per epoch
+
+# MONAI dictionary transforms, applied after z-scoring (that is, to quantitative maps in physical units).
+augmentation:
+  default:
+    - {name: RandFlipd, keys: [inputs, targets], prob: 0.5, spatial_axis: 0}
+    - {name: RandFlipd, keys: [inputs, targets], prob: 0.5, spatial_axis: 1}
+    - {name: RandFlipd, keys: [inputs, targets], prob: 0.5, spatial_axis: 2}
+    - {name: RandRotate90d, keys: [inputs, targets], prob: 0.5, max_k: 3, spatial_axes: [0, 2]}
+    - {name: RandGaussianNoised, keys: [inputs], prob: 0.5, mean: 0.0, std: 0.05}
+    - {name: RandAdjustContrastd, keys: [inputs], prob: 0.5, gamma: [0.9, 1.1]}
+    - {name: RandShiftIntensityd, keys: [inputs], prob: 0.5, offsets: 0.1}
+    - {name: RandBiasFieldd, keys: [inputs], prob: 0.5}
+  degree_centrality:                                # original 5fMRI_Train (no Gaussian noise or intensity shift); unused
+    - {name: RandFlipd, keys: [inputs, targets], prob: 0.5, spatial_axis: 0}
+    - {name: RandFlipd, keys: [inputs, targets], prob: 0.5, spatial_axis: 1}
+    - {name: RandFlipd, keys: [inputs, targets], prob: 0.5, spatial_axis: 2}
+    - {name: RandRotate90d, keys: [inputs, targets], prob: 0.5, max_k: 3, spatial_axes: [0, 2]}
+    - {name: RandAdjustContrastd, keys: [inputs], prob: 0.5, gamma: [0.9, 1.1]}
+    - {name: RandBiasFieldd, keys: [inputs], prob: 0.5}
+
+# Input configurations. Channel order is always CBV, CBF, T2, T2S, T1, fMRI (the order the checkpoints expect).
+# role: reduction = part of the input reduction (selected per number of inputs);
+#       comparison = predefined comparison model (never selected as best).
+models:   # table_label = model name in the figure tables (synthcmro2_stats_df, cmro2_vox_df)
+  reference:         {inputs: [CBV, CBF, T2, T2S], role: reduction, table_label: reference}
+  without_cbv:       {inputs: [CBF, T2, T2S], role: reduction, table_label: wo CBV}
+  cbf_t2s:           {inputs: [CBF, T2S], role: reduction, table_label: "CBF & T2*"}
+  cbf_t2:            {inputs: [CBF, T2], role: reduction, table_label: "CBF & T2"}
+  t2_t2s:            {inputs: [T2, T2S], role: reduction, table_label: "T2 & T2*"}
+  cbf:               {inputs: [CBF], role: reduction, table_label: CBF}
+  t2s:               {inputs: [T2S], role: reduction, table_label: "T2*"}
+  t2:                {inputs: [T2], role: reduction, table_label: T2}
+  t1:                {inputs: [T1], role: comparison, table_label: T1}
+  # Same training setup as the other models (750 epochs, default augmentation, as the z-scored T1 model).
+  # The original 5fMRI_Train setup was epochs: 500 with augmentation: degree_centrality.
+  degree_centrality: {inputs: [fMRI], role: comparison, cohort: fmri_subset, table_label: fMRI,
+                      output_subdir: "resting_preproc_{sid}_ses-1", suffix_masked_target: true}
+
+selection:
+  # Fold per model: lowest validation generator loss (the checkpointing criterion).
+  # Model per number of inputs: lowest cross-validated gray matter MAE (mean over folds).
+  # Folds are read from <selection_dir>/cv_selection.csv; entries here override them (logged as a warning).
+  fixed_folds: {}
+
+testing:
+  zscore_stats: all_training      # all_training (as in the notebooks) or fold (statistics saved with the fold)
+  save_masked_inputs: true        # as the testing notebook (saveFiles=True); existing files are kept
+  # Each dataset: models = model keys applied (or "main" = all models of the main cohort);
+  # the dataset key is its name in the figure tables; participants_info and export_models define the tables written by `export`
+  # (export_models: models included in the tables; default all applied models).
+  datasets:
+    test_set:                     # main cohort test set (Young-adults I/II, Older-adults I/II)
+      participants_info: data/public/participants.tsv
+      export_models: [reference, without_cbv, cbf_t2s, cbf, t1]
+      data_dir: data/mqbold/testing
+      condition: rest
+      models: main
+      ids: [sub-p021, sub-p030, sub-p034, sub-p035, sub-p036, sub-p040, sub-p046, sub-p047, sub-p050, sub-p055,
+            sub-p103, sub-p112, sub-p114, sub-p123, sub-p127, sub-p129, sub-p135, sub-p137, sub-p139, sub-p142,
+            sub-p147, sub-p204, sub-p217, sub-p220, sub-p222, sub-p225, sub-p226, sub-p228, sub-p229, sub-p230,
+            sub-p235, sub-stab005, sub-stab009, sub-stab012, sub-stab013, sub-stab019, sub-stab023, sub-stab025,
+            sub-stab029, sub-stab030, sub-stab033]
+    calculation:                  # calculation task, Young-adults I test participants
+      participants_info: data/public/participants.tsv
+      export_models: [reference, without_cbv, cbf_t2s, cbf]
+      data_dir: data/mqbold/testing
+      condition: calc
+      models: main
+      ids: [sub-p021, sub-p030, sub-p034, sub-p035, sub-p036, sub-p040, sub-p046, sub-p047, sub-p050, sub-p055]
+    replication:                  # replication dataset (same vendor and protocol)
+      participants_info: data/public/participants.tsv
+      export_models: [cbf_t2s]
+      data_dir: data/mqbold/testing
+      condition: rest
+      models: main
+      ids: [s010_eunat, s014_eunat, s005_eunat, s002_eunat, s028_eunat, s033_eunat, s008_eunat, s026_eunat,
+            s011_eunat, s037_eunat, s027_eunat, s034_eunat, s031_eunat, s020_eunat, s036_eunat, s023_eunat,
+            s030_eunat, s040_eunat, s038_eunat, s019_eunat, s041_eunat, s017_eunat, s003_eunat, s009_eunat]
+    reproducibility:              # reproducibility dataset (different vendor and protocol);
+                                  # sub-fp002, -fp004, -fp005 excluded for poor data quality
+      participants_info: data/public/participants.tsv
+      export_models: [cbf_t2s]
+      data_dir: data/mqbold/testing
+      condition: rest
+      models: main
+      ids: [sub-fp009, sub-fp010, sub-fp012, sub-fp015, sub-fp019, sub-fp022, sub-fp023, sub-fp024, sub-fp025,
+            sub-fp026, sub-fp027, sub-fp028]
+    test_retest:                  # second within-session scan of the Young-adults II test participants
+                                  # (Figure S2); sub-stab009 excluded (poor data quality)
+      participants_info: data/public/participants.tsv
+      export_models: [reference, without_cbv, cbf_t2s, cbf]   # own tables: export --datasets test_retest --tag <date>_test_retest
+      data_dir: data/mqbold/testing/replicability
+      condition: rest
+      models: main
+      ids: [sub-stab005, sub-stab012, sub-stab013, sub-stab019, sub-stab023, sub-stab025, sub-stab029,
+            sub-stab030, sub-stab033]
+    training_oof:                 # out-of-fold predictions of the 54 training participants (Fig. 4b): each
+                                  # participant is predicted by the fold model for which it was a validation
+                                  # participant, never by a model trained on it. The age dependence of the model
+                                  # error (synthetic - analytical) fitted here is removed from the test set.
+      participants_info: data/public/participants.tsv
+      out_of_fold: true           # ids: the cohort's training participants without exclude_ids
+      data_dir: data/mqbold/training
+      output_dir: data/mqbold/out_of_fold
+      export_voxels: false        # participant metrics only
+      condition: rest
+      models: [cbf_t2s]
+    fmri_subset:                  # Young-adults I test participants with resting-state fMRI
+      participants_info: data/public/participants.tsv
+      data_dir: data/mqbold/testing
+      condition: rest
+      models: [degree_centrality]
+      ids: [sub-p021, sub-p030, sub-p035, sub-p036, sub-p040, sub-p046, sub-p047, sub-p050, sub-p055]

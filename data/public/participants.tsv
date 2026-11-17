@@ -1,0 +1,132 @@
+participant_id	cohort	role	sex	age	calculation_task	resting_state_fmri	second_scan
+sub-p019	Young-adults I	training	f	23.0	False	False	False
+sub-p020	Young-adults I	training	m	31.0	False	False	False
+sub-p023	Young-adults I	training	f	23.0	False	False	False
+sub-p026	Young-adults I	training	m	33.0	False	False	False
+sub-p027	Young-adults I	training	m	41.0	False	False	False
+sub-p028	Young-adults I	training	m	32.0	False	False	False
+sub-p029	Young-adults I	training	f	29.0	False	False	False
+sub-p031	Young-adults I	training	f	29.0	False	False	False
+sub-p032	Young-adults I	training	f	32.0	False	False	False
+sub-p033	Young-adults I	training	f	23.0	False	False	False
+sub-p037	Young-adults I	training	f	54.0	False	False	False
+sub-p038	Young-adults I	training	m	25.0	False	False	False
+sub-p039	Young-adults I	training	f	22.0	False	False	False
+sub-p043	Young-adults I	training	m	23.0	False	False	False
+sub-p044	Young-adults I	training	f	30.0	False	False	False
+sub-p048	Young-adults I	training	f	29.0	False	False	False
+sub-p049	Young-adults I	training	m	39.0	False	False	False
+sub-p051	Young-adults I	training	f	44.0	False	False	False
+sub-p052	Young-adults I	training	f	33.0	False	False	False
+sub-p054	Young-adults I	training	m	28.0	False	False	False
+sub-p021	Young-adults I	test	m	41.0	True	True	False
+sub-p030	Young-adults I	test	f	29.0	True	True	False
+sub-p034	Young-adults I	test	m	28.0	True	False	False
+sub-p035	Young-adults I	test	m	23.0	True	True	False
+sub-p036	Young-adults I	test	f	23.0	True	True	False
+sub-p040	Young-adults I	test	f	26.0	True	True	False
+sub-p046	Young-adults I	test	f	21.0	True	True	False
+sub-p047	Young-adults I	test	m	21.0	True	True	False
+sub-p050	Young-adults I	test	f	35.0	True	True	False
+sub-p055	Young-adults I	test	m	41.0	True	True	False
+sub-stab003	Young-adults II	training	f	23.0	False	False	False
+sub-stab007	Young-adults II	training	m	23.0	False	False	False
+sub-stab010	Young-adults II	training	f	24.0	False	False	False
+sub-stab014	Young-adults II	training	f	28.0	False	False	False
+sub-stab015	Young-adults II	training	m	23.0	False	False	False
+sub-stab016	Young-adults II	training	m	22.0	False	False	False
+sub-stab017	Young-adults II	training	f	36.0	False	False	False
+sub-stab018	Young-adults II	training	f	26.0	False	False	False
+sub-stab020	Young-adults II	training	f	25.0	False	False	False
+sub-stab021	Young-adults II	training	m	29.0	False	False	False
+sub-stab022	Young-adults II	training	f	25.0	False	False	False
+sub-stab024	Young-adults II	training	m	26.0	False	False	False
+sub-stab026	Young-adults II	training	f	31.0	False	False	False
+sub-stab027	Young-adults II	training	f	24.0	False	False	False
+sub-stab028	Young-adults II	training	m	27.0	False	False	False
+sub-stab031	Young-adults II	training	m	23.0	False	False	False
+sub-stab032	Young-adults II	training	f	21.0	False	False	False
+sub-stab034	Young-adults II	training	f	23.0	False	False	False
+sub-stab036	Young-adults II	training	m	23.0	False	False	False
+sub-stab005	Young-adults II	test	m	23.0	False	False	True
+sub-stab009	Young-adults II	test	m	26.0	False	False	False
+sub-stab012	Young-adults II	test	f	25.0	False	False	True
+sub-stab013	Young-adults II	test	f	33.0	False	False	True
+sub-stab019	Young-adults II	test	f	28.0	False	False	True
+sub-stab023	Young-adults II	test	m	22.0	False	False	True
+sub-stab025	Young-adults II	test	f	23.0	False	False	True
+sub-stab029	Young-adults II	test	f	21.0	False	False	True
+sub-stab030	Young-adults II	test	m	24.0	False	False	True
+sub-stab033	Young-adults II	test	m	27.0	False	False	True
+sub-p106	Older-adults I	training	f	n/a	False	False	False
+sub-p115	Older-adults I	training	m	n/a	False	False	False
+sub-p128	Older-adults I	training	f	n/a	False	False	False
+sub-p130	Older-adults I	training	f	n/a	False	False	False
+sub-p143	Older-adults I	training	m	n/a	False	False	False
+sub-p146	Older-adults I	training	f	n/a	False	False	False
+sub-p162	Older-adults I	training	m	n/a	False	False	False
+sub-p103	Older-adults I	test	f	71.0	False	False	False
+sub-p112	Older-adults I	test	m	72.0	False	False	False
+sub-p114	Older-adults I	test	m	64.0	False	False	False
+sub-p123	Older-adults I	test	m	71.0	False	False	False
+sub-p127	Older-adults I	test	f	75.0	False	False	False
+sub-p129	Older-adults I	test	f	73.0	False	False	False
+sub-p135	Older-adults I	test	f	75.0	False	False	False
+sub-p137	Older-adults I	test	f	65.0	False	False	False
+sub-p139	Older-adults I	test	f	75.0	False	False	False
+sub-p142	Older-adults I	test	f	73.0	False	False	False
+sub-p147	Older-adults I	test	f	73.0	False	False	False
+sub-p206	Older-adults II	training	m	n/a	False	False	False
+sub-p207	Older-adults II	training	f	n/a	False	False	False
+sub-p209	Older-adults II	training	m	n/a	False	False	False
+sub-p213	Older-adults II	training	f	n/a	False	False	False
+sub-p219	Older-adults II	training	f	n/a	False	False	False
+sub-p224	Older-adults II	training	f	n/a	False	False	False
+sub-p227	Older-adults II	training	f	n/a	False	False	False
+sub-p234	Older-adults II	training	f	n/a	False	False	False
+sub-p204	Older-adults II	test	m	66.0	False	False	False
+sub-p217	Older-adults II	test	m	67.0	False	False	False
+sub-p220	Older-adults II	test	m	65.0	False	False	False
+sub-p222	Older-adults II	test	f	75.0	False	False	False
+sub-p225	Older-adults II	test	f	61.0	False	False	False
+sub-p226	Older-adults II	test	f	68.0	False	False	False
+sub-p228	Older-adults II	test	f	72.0	False	False	False
+sub-p229	Older-adults II	test	f	64.0	False	False	False
+sub-p230	Older-adults II	test	f	68.0	False	False	False
+sub-p235	Older-adults II	test	f	84.0	False	False	False
+s002_eunat	Same-protocol	same-protocol	m	27.0	False	False	False
+s003_eunat	Same-protocol	same-protocol	m	22.0	False	False	False
+s005_eunat	Same-protocol	same-protocol	m	23.0	False	False	False
+s008_eunat	Same-protocol	same-protocol	m	26.0	False	False	False
+s009_eunat	Same-protocol	same-protocol	m	22.0	False	False	False
+s010_eunat	Same-protocol	same-protocol	m	27.0	False	False	False
+s011_eunat	Same-protocol	same-protocol	m	22.0	False	False	False
+s014_eunat	Same-protocol	same-protocol	m	22.0	False	False	False
+s017_eunat	Same-protocol	same-protocol	m	25.0	False	False	False
+s019_eunat	Same-protocol	same-protocol	m	21.0	False	False	False
+s020_eunat	Same-protocol	same-protocol	m	25.0	False	False	False
+s023_eunat	Same-protocol	same-protocol	m	22.0	False	False	False
+s026_eunat	Same-protocol	same-protocol	m	25.0	False	False	False
+s027_eunat	Same-protocol	same-protocol	m	22.0	False	False	False
+s028_eunat	Same-protocol	same-protocol	m	23.0	False	False	False
+s030_eunat	Same-protocol	same-protocol	m	24.0	False	False	False
+s031_eunat	Same-protocol	same-protocol	m	27.0	False	False	False
+s033_eunat	Same-protocol	same-protocol	m	26.0	False	False	False
+s034_eunat	Same-protocol	same-protocol	m	24.0	False	False	False
+s036_eunat	Same-protocol	same-protocol	m	22.0	False	False	False
+s037_eunat	Same-protocol	same-protocol	m	21.0	False	False	False
+s038_eunat	Same-protocol	same-protocol	m	26.0	False	False	False
+s040_eunat	Same-protocol	same-protocol	m	26.0	False	False	False
+s041_eunat	Same-protocol	same-protocol	m	26.0	False	False	False
+sub-fp009	Cross-vendor	cross-vendor	f	n/a	False	False	False
+sub-fp010	Cross-vendor	cross-vendor	f	n/a	False	False	False
+sub-fp012	Cross-vendor	cross-vendor	f	n/a	False	False	False
+sub-fp015	Cross-vendor	cross-vendor	f	n/a	False	False	False
+sub-fp019	Cross-vendor	cross-vendor	f	n/a	False	False	False
+sub-fp022	Cross-vendor	cross-vendor	f	n/a	False	False	False
+sub-fp023	Cross-vendor	cross-vendor	m	n/a	False	False	False
+sub-fp024	Cross-vendor	cross-vendor	m	n/a	False	False	False
+sub-fp025	Cross-vendor	cross-vendor	m	n/a	False	False	False
+sub-fp026	Cross-vendor	cross-vendor	m	n/a	False	False	False
+sub-fp027	Cross-vendor	cross-vendor	m	n/a	False	False	False
+sub-fp028	Cross-vendor	cross-vendor	f	n/a	False	False	False

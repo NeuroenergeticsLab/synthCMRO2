@@ -1,0 +1,30 @@
+{
+  "criterion_fold": "lowest validation generator loss (checkpointing criterion)",
+  "criterion_configuration": "lowest cross-validated gray matter MAE (mean over folds), input-reduction models",
+  "selected": [
+    {
+      "config": "_OmitCBV_OmitT2_OmitT2S_OmitT1",
+      "inputs": "CBF",
+      "n_inputs": 1,
+      "selected_fold": 3
+    },
+    {
+      "config": "_OmitCBV_OmitT2_OmitT1",
+      "inputs": "CBF&T2S",
+      "n_inputs": 2,
+      "selected_fold": 1
+    },
+    {
+      "config": "_OmitCBV_OmitT1",
+      "inputs": "CBF&T2&T2S",
+      "n_inputs": 3,
+      "selected_fold": 3
+    },
+    {
+      "config": "_OmitT1",
+      "inputs": "CBV&CBF&T2&T2S",
+      "n_inputs": 4,
+      "selected_fold": 1
+    }
+  ]
+}
