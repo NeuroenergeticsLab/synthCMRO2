@@ -1,3 +1,4 @@
 # JupyterLite site of notebooks/figures.ipynb (built by .github/workflows/jupyterlite.yml)
-jupyterlite-core>=0.6,<0.7
+jupyterlite-core[contents]>=0.6,<0.7   # [contents]: jupyter_server, needed to include the notebook and data
 jupyterlite-pyodide-kernel>=0.6,<0.7
+jupyter-server>=2
