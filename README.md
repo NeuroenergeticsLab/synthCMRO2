@@ -2,7 +2,7 @@
 
 This is the code for the manuscript *Generative Deep Learning Maps Brain Oxygen Metabolism and Its Age-Related
 Decline from Two Standard Noninvasive MRI Scans* (Castrillón, Marcolongo, et al.):
-[medRxiv preprint](https://doi.org/10.1101/XXXX.XX.XX.XXXXXX) (link to the published article to follow).
+[medRxiv preprint](https://doi.org/10.64898/2026.11.17.26368289) (link to the published article to follow).
 It also provides the trained models and the data behind every figure and table.
 
 A conditional generative adversarial network synthesizes the cerebral metabolic rate of oxygen (CMRO₂) from
@@ -20,7 +20,7 @@ This repository lets you:
 Python ≥ 3.11.
 
 ```bash
-git clone [repository URL] && cd synthCMRO2
+git clone https://github.com/NeuroenergeticsLab/synthCMRO2.git && cd synthCMRO2
 pip install -e ".[figures,dev]"      # 1. figures (and tests)
 pip install -e ".[model,figures]"    # 2.–3. models: install PyTorch for your CUDA version first (used: 2.7.0+cu118)
 ```
@@ -125,7 +125,7 @@ tests/
 
 ## Citation
 
-If you use this code, the models or the data, please cite the article ([medRxiv preprint](https://doi.org/10.1101/XXXX.XX.XX.XXXXXX)) and the datasets
+If you use this code, the models or the data, please cite the article ([medRxiv preprint](https://doi.org/10.64898/2026.11.17.26368289)) and the datasets
 above.
 
 ## License
