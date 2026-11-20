@@ -15,6 +15,19 @@ This repository lets you:
 2. **apply the trained models** to your own CBF and T2* maps;
 3. **rerun the full pipeline** (training, model selection, prediction) on mqBOLD data.
 
+## Run the figures without installing anything
+
+[![JupyterLite](https://jupyterlite.rtfd.io/en/latest/_static/badge.svg)](https://neuroenergeticslab.github.io/synthCMRO2/lab/index.html?path=figures.ipynb)
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/NeuroenergeticsLab/synthCMRO2/main?urlpath=lab/tree/notebooks/figures.ipynb)
+
+The notebook `notebooks/figures.ipynb` reproduces Figures 2–4, S2 and Table S2 from `data/public/` and checks
+every statistic against `reference/stats/`.
+
+- **JupyterLite** runs it in your browser (Python compiled to WebAssembly): it opens in seconds, the first
+  cell downloads the packages (about 30–60 s), and the figures take a few minutes in total.
+- **Binder** runs it on a free server with standard Python: start-up takes a few minutes, the run then
+  matches a local installation.
+
 ## Install
 
 Python ≥ 3.11.
@@ -117,7 +130,8 @@ config/        model.yaml (models, participants, training), figures.yaml (public
 data/public/   shared tables (Figures 2–4, S2, Tables S2–S4)
 data/brain/    mask, template, atlas and surface
 reference/     published figures and the statistics produced from data/public/ (to check a run)
-notebooks/     the full workflow as a notebook
+notebooks/     synthCMRO2.ipynb (full workflow), figures.ipynb (figures in the browser or on Binder)
+lite/, binder/, .github/workflows/   JupyterLite site (GitHub Pages) and Binder environment
 src/synthcmro2/model/     training, selection, prediction, application, export (PyTorch, MONAI)
 src/synthcmro2/figures/   figures, statistics, PLS, benchmark, public tables
 tests/

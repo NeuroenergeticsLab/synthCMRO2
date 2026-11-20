@@ -1,0 +1,4 @@
+#!/bin/bash
+# Binder (mybinder.org): install synthcmro2 with the figure dependencies.
+set -euo pipefail
+pip install --no-cache-dir -e ".[figures]"

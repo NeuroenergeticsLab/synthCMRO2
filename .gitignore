@@ -8,3 +8,8 @@ __pycache__/
 .ruff_cache/
 .pytest_cache/
 .ipynb_checkpoints/
+config/figures_browser.yaml
+lite/pypi/
+_content/
+_site/
+.jupyterlite.doit.db
