@@ -51,6 +51,21 @@ def _pearson_r_vectorized(x: np.ndarray, y: np.ndarray, axis: int = -1) -> np.nd
     return (xm * ym).sum(axis=axis) / np.sqrt((xm**2).sum(axis=axis) * (ym**2).sum(axis=axis))
 
 
+def pearson_p(r: float, p: float, n: int) -> float:
+    """Two-sided P of Pearson r; recomputed from the t statistic in log space if SciPy returns NaN.
+
+    For thousands of voxels and r around 0.9 the P underflows. Desktop SciPy returns 0.0, whereas some builds
+    (e.g. SciPy in Pyodide/JupyterLite) return NaN; this gives 0.0 (or the exact value) in both cases.
+    """
+    if np.isfinite(p) or not np.isfinite(r) or n < 3:
+        return float(p)
+    t = abs(r) * np.sqrt((n - 2) / max(1.0 - r * r, np.finfo(float).tiny))
+    log_sf = stats.t.logsf(t, n - 2)
+    if not np.isfinite(log_sf):
+        log_sf = stats.norm.logsf(t)
+    return float(min(1.0, 2.0 * np.exp(log_sf)))
+
+
 def _bootstrap_rng_kwarg():
     """SciPy >= 1.15 names the random generator ``rng``; older versions ``random_state`` (same behavior)."""
     import inspect
@@ -93,7 +108,7 @@ def agreement(
     return Agreement(
         n=int(x.size),
         r=float(r),
-        p=float(p),
+        p=pearson_p(r, p, x.size),
         r_ci_low=float(boot.confidence_interval.low),
         r_ci_high=float(boot.confidence_interval.high),
         slope=float(fit.slope),
@@ -206,7 +221,7 @@ def correlation(x: pd.Series, y: pd.Series) -> dict[str, float]:
     """Pearson correlation after listwise removal of missing values."""
     pair = pd.DataFrame({"x": x, "y": y}).dropna()
     r, p = stats.pearsonr(pair["x"], pair["y"])
-    return {"n": len(pair), "r": float(r), "p": float(p)}
+    return {"n": len(pair), "r": float(r), "p": pearson_p(r, p, len(pair))}
 
 
 def age_bias_calibration(train: pd.DataFrame) -> dict[str, float]:

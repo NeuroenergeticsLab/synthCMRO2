@@ -12,6 +12,7 @@ from synthcmro2.figures.stats import (
     games_howell,
     paired_difference_summary,
     pairwise_wilcoxon,
+    pearson_p,
     significance_stars,
 )
 
@@ -123,3 +124,14 @@ def test_format_num_minus():
 
     assert format_num(-0.42) == "\u22120.42"
     assert format_num(26.75, 1) == "26.8"
+
+
+def test_pearson_p_replaces_nan():
+    """Pyodide's SciPy returns NaN where desktop SciPy underflows to 0; small P values are recomputed exactly."""
+    rng = np.random.default_rng(0)
+    x = rng.normal(size=30)
+    y = x + rng.normal(size=30)
+    r, p = stats.pearsonr(x, y)
+    assert pearson_p(r, np.nan, 30) == pytest.approx(p, rel=1e-9)
+    assert pearson_p(0.92, np.nan, 7961) == 0.0
+    assert pearson_p(r, p, 30) == p
