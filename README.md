@@ -130,4 +130,10 @@ above.
 
 ## License
 
-Code: MIT (`LICENSE`). Trained models and data: [license of the model archive and data, e.g. CC BY 4.0].
+Copyright © 2026 Gabriel Castrillón, Pietro Marcolongo, and the synthCMRO2 authors.
+
+The code, trained models and data of this repository are licensed under the Creative Commons
+Attribution-NonCommercial-NoDerivatives 4.0 International License (CC BY-NC-ND 4.0; `LICENSE`), the license of
+the medRxiv preprint. You may use and share them unchanged for noncommercial purposes, with attribution; sharing
+modified versions requires permission from the authors. The third-party files in `data/brain/` (template,
+atlas and surface) keep the licenses of their sources (`data/brain/README.md`).

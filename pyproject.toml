@@ -9,7 +9,7 @@ description = "Synthetic CMRO2 from minimal contrast-free MRI: models (training,
 readme = "README.md"
 requires-python = ">=3.11"
 authors = [{ name = "Gabriel Castrillón" }, { name = "Pietro Marcolongo" }]
-license = { text = "MIT" }
+license = { text = "CC-BY-NC-ND-4.0" }
 dependencies = [
     "numpy>=1.26",
     "pandas>=2.2",
